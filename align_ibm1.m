@@ -88,7 +88,9 @@ function [eng, fre] = read_hansard(mydir, numSentences)
 			
 			eng{i} = strsplit(' ', processedLine_e);
 			fre{i} = strsplit(' ', processedLine_f);
-
+            
+        end    
+    end
 end
 
 
@@ -104,20 +106,23 @@ function AM = initialize(eng, fre)
 		for j=1:length(eng{i})
 			for k = 1:length(fre{i})
 				AM.(eng{i,j}).(fre{i,k}) =1;
+            end
+        end
+    end
 				
 	
 	eng_words = fieldnames(AM);
-	for i = 1:numel(eng_words):
+	for i = 1:numel(eng_words)
 		
-		tot = numel(fieldnames(eng_words{i});
 		fre_words =fieldnames(eng_words{i});
-		for j = 1:numel(fre_words)
-			
+		tot = numel(fre_words);
+		
+        for j = 1:numel(fre_words)
+
 			AM.(eng_words{i}).(fre_words{j}) = 1/tot;
 			
-	
-	
-    % TODO: your code goes here
+        end
+    end
 
 end
 
