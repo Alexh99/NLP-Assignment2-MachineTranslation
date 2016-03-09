@@ -1,0 +1,24 @@
+
+English
+
+Type	|	Delta	|	Perplexity
+-----------------------------------
+MLE		|	 -		|	15.6256
+Smooth	|	0.01	|	40.9492
+Smooth	|	0.05	|	50.3516
+Smooth	|	0.1		|	58.3257
+Smooth	|	0.5		|	95.5639
+Smooth	|	1		|	126.5915
+
+
+
+French
+
+Type	|	Delta	|	Perplexity
+-----------------------------------
+MLE		|	 -		|	 15.6533
+Smooth	|	0.01	|	 39.6149
+Smooth	|	0.05	|	 51.0479
+Smooth	|	0.1		|	 60.4133
+Smooth	|	0.5		|	 104.5894
+Smooth	|	1		|	 142.5124
