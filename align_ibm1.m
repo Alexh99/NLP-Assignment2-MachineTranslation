@@ -51,8 +51,6 @@ function AM = align_ibm1(trainDir, numSentences, maxIter, fn_AM)
 
 
 
-
-
 % --------------------------------------------------------------------------------
 % 
 %  Support functions
@@ -72,10 +70,24 @@ function [eng, fre] = read_hansard(mydir, numSentences)
 %
 %         eng{i} = strsplit(' ', preprocess(english_sentence, 'e'));
 %
-  %eng = {};
-  %fre = {};
+	eng = {};
+	fre = {};
 
-  % TODO: your code goes here.
+	DD_E   = dir( [ mydir, filesep, '*', 'e'] );
+	DD_F   = dir( [ mydir, filesep, '*', 'f'] );
+	
+	for iFile=1:length(numSentences)
+
+		lines_e = textread([testDir, filesep, DD_E(iFile).name], '%s','delimiter','\n');
+		lines_f = textread([testDir, filesep, DD_F(iFile).name], '%s','delimiter','\n');
+
+		for l=1:length(lines_e)
+			
+			processedLine_e = preprocess(lines_e{l}, 'e');
+			processedLine_f = preprocess(lines_f{l}, 'f');
+			
+			eng{i} = strsplit(' ', processedLine_e);
+			fre{i} = strsplit(' ', processedLine_f);
 
 end
 
@@ -87,6 +99,24 @@ function AM = initialize(eng, fre)
 %
     AM = {}; % AM.(english_word).(foreign_word)
 
+	
+	for i = 1:length(eng)
+		for j=1:length(eng{i})
+			for k = 1:length(fre{i})
+				AM.(eng{i,j}).(fre{i,k}) =1;
+				
+	
+	eng_words = fieldnames(AM);
+	for i = 1:numel(eng_words):
+		
+		tot = numel(fieldnames(eng_words{i});
+		fre_words =fieldnames(eng_words{i});
+		for j = 1:numel(fre_words)
+			
+			AM.(eng_words{i}).(fre_words{j}) = 1/tot;
+			
+	
+	
     % TODO: your code goes here
 
 end
