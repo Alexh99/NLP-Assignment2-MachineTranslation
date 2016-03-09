@@ -78,16 +78,16 @@ function [eng, fre] = read_hansard(mydir, numSentences)
 	
 	for iFile=1:length(numSentences)
 
-		lines_e = textread([testDir, filesep, DD_E(iFile).name], '%s','delimiter','\n');
-		lines_f = textread([testDir, filesep, DD_F(iFile).name], '%s','delimiter','\n');
+		lines_e = textread([mydir, filesep, DD_E(iFile).name], '%s','delimiter','\n');
+		lines_f = textread([mydir, filesep, DD_F(iFile).name], '%s','delimiter','\n');
 
 		for l=1:length(lines_e)
 			
 			processedLine_e = preprocess(lines_e{l}, 'e');
 			processedLine_f = preprocess(lines_f{l}, 'f');
 			
-			eng{i} = strsplit(' ', processedLine_e);
-			fre{i} = strsplit(' ', processedLine_f);
+			eng{l} = strsplit(' ', processedLine_e);
+			fre{l} = strsplit(' ', processedLine_f);
             
         end    
     end
@@ -105,7 +105,7 @@ function AM = initialize(eng, fre)
 	for i = 1:length(eng)
 		for j=1:length(eng{i})
 			for k = 1:length(fre{i})
-				AM.(eng{i,j}).(fre{i,k}) =1;
+				AM.(eng{i}{j}).(fre{i}{k}) =1;
             end
         end
     end
@@ -114,7 +114,7 @@ function AM = initialize(eng, fre)
 	eng_words = fieldnames(AM);
 	for i = 1:numel(eng_words)
 		
-		fre_words =fieldnames(eng_words{i});
+		fre_words = fieldnames(AM.(eng_words{i}));
 		tot = numel(fre_words);
 		
         for j = 1:numel(fre_words)
@@ -123,7 +123,13 @@ function AM = initialize(eng, fre)
 			
         end
     end
+    
+    AM.SENTSTART = rmfield(AM.SENTSTART, fieldnames(AM.SENTSTART));
+    AM.SENTSTART.SENTSTART = 1;
 
+    AM.SENTEND = rmfield(AM.SENTEND, fieldnames(AM.SENTEND));
+    AM.SENTEND.SENTEND = 1;
+    
 end
 
 function t = em_step(t, eng, fre)
