@@ -38,7 +38,7 @@ for iFile=1:length(DD)
 		
 		%Calculate BLEU score somehow? 
 		%Maybe bluemix stuff goes here?
-		fprintf(eng);
+		
 	end
 end
 
