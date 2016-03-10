@@ -136,8 +136,87 @@ function t = em_step(t, eng, fre)
 % 
 % One step in the EM algorithm.
 %
-  
-  % TODO: your code goes here
+
+% Note: t == AM
+
+    % Initialize tcount and total
+    tcount = {};
+    total = {};
+    
+    eng_words = fieldnames(t);
+ 	for i = 1:numel(eng_words)
+        % set total(e) to 0 for all e
+        total.(eng_words{i}) = 0;
+ 		fre_words = fieldnames(t.(eng_words{i}));
+        for j = 1:numel(fre_words)
+            % set tcount(f, e) to 0 for all f, e
+            tcount.(eng_words{i}).(fre_words{j}) = 0;
+        end
+    end
+
+%     Do we need all word combinations, not just the
+%     combinations we did in the previous step?
+%
+%     Get all unique french and english words
+%     eng_words = unique([eng{:}]);
+%     fre_words = unique([fre{:}]);
+%     for i = 1:numel(eng_words)
+%        e = eng_words{i};
+%        total.(e) = 0;
+%        for j = 1:numel(fre_words)
+%           f = fre_words{j};
+%           tcount.(e).(f) = 0; 
+%        end
+%     end
+    
+    %  Slide 13
+    for i = 1:numel(eng)
+        E = eng{i};
+        F = fre{i};
+        unique_F = unique(F);
+        unique_E = unique(E);
+        for j = 1:numel(unique_F)
+            f = unique_F{j};
+            F_count_f = sum(strcmp(F,{f}));
+            
+            denom_c = 0;
+            for k = 1:numel(unique_E)
+                e = unique_E{k};
+                
+                % Check if P(f|e) [t.(e).(f)] is a thing, otherwise treat it as 0
+                if any(strcmp(f,fieldnames(t.(e))))
+                    denom_c = denom_c + (t.(e).(f) * F_count_f);
+                % else
+                    % denom_c = denom_c + (0 * F_countf);
+                end
+            end
+            
+            for k = 1:numel(unique_E)
+                e = unique_E{k};
+                E_count_e = sum(strcmp(E,{e}));
+                
+                % Check if P(f|e) [t.(e).(f)] is a thing, otherwise treat it as 0
+                if any(strcmp(f,fieldnames(t.(e))))
+                    tcount.(e).(f) = tcount.(e).(f) + (t.(e).(f)*F_count_f*E_count_e/denom_c);
+                    total.(e) = total.(e) + (t.(e).(f)*F_count_f*E_count_e/denom_c);
+                end
+            end
+        end
+    end
+    
+    % Slide 12
+    domain_total = fieldnames(total);
+    for i = 1:numel(domain_total)
+       e = domain_total{i};
+       
+       domain_tcount = fieldnames(tcount.(e));
+       for j = 1:numel(domain_tcount)
+           f = domain_tcount{j};
+           
+           t.(e).(f) = tcount.(e).(f)/total.(e);
+       end
+    end
+
 end
 
 
