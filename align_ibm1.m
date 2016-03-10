@@ -35,12 +35,13 @@ function AM = align_ibm1(trainDir, numSentences, maxIter, fn_AM)
   
   % Read in the training data
   [eng, fre] = read_hansard(trainDir, numSentences);
-
+  fprintf('Done Reading\n')
   % Initialize AM uniformly 
   AM = initialize(eng, fre);
-
+  fprintf('Done Initialization\n')
   % Iterate between E and M steps
   for iter=1:maxIter,
+    fprintf('Iteration: %d\n',iter);
     AM = em_step(AM, eng, fre);
   end
 
@@ -76,19 +77,25 @@ function [eng, fre] = read_hansard(mydir, numSentences)
 	DD_E   = dir( [ mydir, filesep, '*', 'e'] );
 	DD_F   = dir( [ mydir, filesep, '*', 'f'] );
 	
-	for iFile=1:length(numSentences)
+    i = 0;
+	for iFile=1:length(DD_E)
 
 		lines_e = textread([mydir, filesep, DD_E(iFile).name], '%s','delimiter','\n');
 		lines_f = textread([mydir, filesep, DD_F(iFile).name], '%s','delimiter','\n');
 
 		for l=1:length(lines_e)
 			
-			processedLine_e = preprocess(lines_e{l}, 'e');
-			processedLine_f = preprocess(lines_f{l}, 'f');
+            if i < numSentences
+                processedLine_e = preprocess(lines_e{l}, 'e');
+                processedLine_f = preprocess(lines_f{l}, 'f');
 			
-			eng{l} = strsplit(' ', processedLine_e);
-			fre{l} = strsplit(' ', processedLine_f);
-            
+                eng{l} = strsplit(' ', processedLine_e);
+                fre{l} = strsplit(' ', processedLine_f);
+                
+                i = i + 1;
+            else
+                return;
+            end
         end    
     end
 end
@@ -190,7 +197,6 @@ function t = em_step(t, eng, fre)
                     % denom_c = denom_c + (0 * F_countf);
                 end
             end
-            
             for k = 1:numel(unique_E)
                 e = unique_E{k};
                 E_count_e = sum(strcmp(E,{e}));
