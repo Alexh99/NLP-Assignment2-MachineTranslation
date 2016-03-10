@@ -15,11 +15,11 @@ vocabSize    = length(fields(LM.uni));
 % numSentences =  don't need, already created the AM models ;
 
 % Train your language models. This is task 2 which makes use of task 1
-LME = LM %lm_train( trainDir, 'e', fn_LME );
+LME = LM; %lm_train( trainDir, 'e', fn_LME );
 %LMF = lm_train( trainDir, 'f', fn_LMF );
 
 % Train your alignment model of French, given English 
-AMFE = AM%align_ibm1( trainDir, numSentences );
+AMFE = AM;%align_ibm1( trainDir, numSentences );
 
 % ... TODO: more 
 
@@ -30,7 +30,7 @@ DD   = dir( [ testDir, filesep, '*', 'f'] );
 	
 for iFile=1:length(DD)
 
-	lines_f = textread([mydir, filesep, DD_F(iFile).name], '%s','delimiter','\n');
+	lines_f = textread([testDir, filesep, DD(iFile).name], '%s','delimiter','\n');
 
 	for l=1:length(lines_f)
 		fre = preprocess(lines_f{l}, 'f');
