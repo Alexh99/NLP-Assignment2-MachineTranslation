@@ -37,9 +37,9 @@ for l=1:length(lines_f)
 	eng{l} = strsplit(' ', decode2( fre, LME, AMFE, '', delta, vocabSize ), 'omit');
 	
     refs = {
-        strsplit(' ', lines_e{l}, 'omit'),
-        strsplit(' ', lines_e_google{l}, 'omit'),
-        strsplit(' ', result, 'omit')
+        strsplit(' ', preprocess(lines_e{l}, 'e'), 'omit'),
+        strsplit(' ', preprocess(lines_e_google{l}, 'e'), 'omit'),
+        strsplit(' ', preprocess(result, 'e'), 'omit')
     };
     
     scores{l} = zeros(1,3);
