@@ -30,12 +30,10 @@ lines_e = textread([testDir, filesep, 'Task5.e'], '%s','delimiter','\n');
 lines_e_google = textread([testDir, filesep, 'Task5.google.e'], '%s','delimiter','\n');
 eng = {};
 for l=1:length(lines_f)
-    temp = ['env LD_LIBRARY_PATH='''' curl -u "{NAME}":"{PASSWORD}" -X POST -F "text=',lines_f{l},'" -F "source=fr" -F "target=en" "https://gateway.watsonplatform.net/language-translation/api/v2/translate"'];
-    [status, result] = unix(temp);
+    [status, result] = unix(sprintf('curl --insecure -u "e61cf647-0223-4b73-bfb4-42e375a14af6":"s0SWfR64mL1s" -X POST -F "text=%s" -F "source=fr" -F "target=en" "https://gateway.watsonplatform.net/language-translation/api/v2/translate"',lines_f{l}));
 	fre = preprocess(lines_f{l}, 'f');
 	eng{l} = decode( fre, LME, AMFE, '', delta, vocabSize );
 	
     refs = {lines_e{l},lines_e_google{l},result};
-    
-    score = bleu(eng{l}, refs, 1, 5) %i dont think cap matters?
+    score = bleu(strjoin(eng{l}), refs, 1, Inf); %i dont think cap matters?
 end
