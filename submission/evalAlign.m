@@ -4,6 +4,8 @@
 %  This is simply the script (not the function) that you use to perform your evaluations in 
 %  Task 5. 
 
+csc401_a2_defns;
+
 % some of your definitions
 trainDir        = '/u/cs401/A2_SMT/data/Hansard/Training/';
 testDir         = '/u/cs401/A2_SMT/data/Hansard/Testing/';
