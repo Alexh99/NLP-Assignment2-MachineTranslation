@@ -42,6 +42,11 @@ for l=1:length(lines_f)
         strsplit(' ', preprocess(result, 'e'), 'omit')
     };
     
+    %Strip SENTSTART and SENTEND
+    refs{1} = refs{1}(2:(length(refs{1})-1));
+    refs{2} = refs{2}(2:(length(refs{2})-1));
+    refs{3} = refs{3}(2:(length(refs{3})-1));
+    
     scores{l} = zeros(1,3);
     for i = 1:3
         score = bleu(eng{l}, refs, i, Inf);
