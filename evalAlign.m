@@ -29,6 +29,8 @@ lines_f = textread([testDir, filesep, 'Task5.f'], '%s','delimiter','\n');
 lines_e = textread([testDir, filesep, 'Task5.e'], '%s','delimiter','\n');
 lines_e_google = textread([testDir, filesep, 'Task5.google.e'], '%s','delimiter','\n');
 eng = {};
+
+scores = {};
 for l=1:length(lines_f)
     [status, result] = unix( sprintf('curl --insecure -u "e61cf647-0223-4b73-bfb4-42e375a14af6":"s0SWfR64mL1s" -X POST -F "text=%s" -F "source=fr" -F "target=en" "https://gateway.watsonplatform.net/language-translation/api/v2/translate"', lines_f{l}) );
 	fre = preprocess(lines_f{l}, 'f');
@@ -40,9 +42,9 @@ for l=1:length(lines_f)
         strsplit(' ', result, 'omit')
     };
     
-    scores = zeros(1,3);
+    scores{l} = zeros(1,3);
     for i = 1:3
         score = bleu(eng{l}, refs, i, Inf);
-        scores(i) = score;
+        scores{l}(i) = score;
     end
 end
