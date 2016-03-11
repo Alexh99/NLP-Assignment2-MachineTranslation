@@ -77,3 +77,4 @@ for l=1:length(lines_f)
 end
 
 save(fn_scores, 'scores');
+exit;
