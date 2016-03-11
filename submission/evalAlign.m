@@ -5,16 +5,19 @@
 %  Task 5. 
 
 % some of your definitions
-trainDir     = 'Hansard/Training/';
-testDir      = 'Hansard/Testing/';
-fn_LME       = 'english_model.mat';
-fn_AMFE      = 'models/10 iterations/ibm1_1000.mat';
-fn_scores    = 'scores_1000.mat';
-num_sents    = 1000;
-max_iter     = 10;
-lm_type      = '';
-delta        = 1; % These isn't used
-vocabSize    = 1; % This isn't used
+trainDir        = '/u/cs401/A2_SMT/data/Hansard/Training/';
+testDir         = '/u/cs401/A2_SMT/data/Hansard/Testing/';
+fn_LME          = 'english_model.mat';
+fn_AMFE         = 'ibm1_1000.mat';
+fn_scores       = 'scores_1000.mat';
+fn_task5f       = '/u/cs401/A2 SMT/data/Hansard/Testing/Task5.f';
+fn_task5e       = '/u/cs401/A2 SMT/data/Hansard/Testing/Task5.e';
+fn_task5google  = '/u/cs401/A2 SMT/data/Hansard/Testing/Task5.google.e';
+num_sents       = 1000;
+max_iter        = 10;
+lm_type         = '';
+delta           = 1; % These isn't used
+vocabSize       = 1; % This isn't used
 
 % Train your language models. This is task 2 which makes use of task 1
 if exist(fn_LME, 'file') == 2
@@ -33,9 +36,9 @@ else
 end
 
 % Read in lines
-lines_f = textread([testDir, filesep, 'Task5.f'], '%s','delimiter','\n');
-lines_e = textread([testDir, filesep, 'Task5.e'], '%s','delimiter','\n');
-lines_e_google = textread([testDir, filesep, 'Task5.google.e'], '%s','delimiter','\n');
+lines_f = textread([testDir, filesep, fn_task5f], '%s','delimiter','\n');
+lines_e = textread([testDir, filesep, fn_task5e], '%s','delimiter','\n');
+lines_e_google = textread([testDir, filesep, fn_task5google], '%s','delimiter','\n');
 
 % Keep track of the translated senteces and their BLEU scores.
 eng = {};
