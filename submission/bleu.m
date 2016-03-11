@@ -12,6 +12,8 @@ function score = bleu( candidate, refs, n, cap )
 %       cap       : (int) the maximum number of times to count candidate
 %                   ngrams
 %
+%  Authors: Jake S., Alex H.
+%
     %Strip SENTSTART and SENTEND
     candidate(strcmp(candidate, 'SENTSTART')) = [];
     candidate(strcmp(candidate, 'SENTEND')) = [];
