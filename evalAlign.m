@@ -30,10 +30,19 @@ lines_e = textread([testDir, filesep, 'Task5.e'], '%s','delimiter','\n');
 lines_e_google = textread([testDir, filesep, 'Task5.google.e'], '%s','delimiter','\n');
 eng = {};
 for l=1:length(lines_f)
-    [status, result] = unix(sprintf('curl --insecure -u "e61cf647-0223-4b73-bfb4-42e375a14af6":"s0SWfR64mL1s" -X POST -F "text=%s" -F "source=fr" -F "target=en" "https://gateway.watsonplatform.net/language-translation/api/v2/translate"',lines_f{l}));
+    [status, result] = unix( sprintf('curl --insecure -u "e61cf647-0223-4b73-bfb4-42e375a14af6":"s0SWfR64mL1s" -X POST -F "text=%s" -F "source=fr" -F "target=en" "https://gateway.watsonplatform.net/language-translation/api/v2/translate"', lines_f{l}) );
 	fre = preprocess(lines_f{l}, 'f');
-	eng{l} = decode( fre, LME, AMFE, '', delta, vocabSize );
+	eng{l} = strsplit(' ', decode2( fre, LME, AMFE, '', delta, vocabSize ), 'omit');
 	
-    refs = {lines_e{l},lines_e_google{l},result};
-    score = bleu(strjoin(eng{l}), refs, 1, Inf); %i dont think cap matters?
+    refs = {
+        strsplit(' ', lines_e{l}, 'omit'),
+        strsplit(' ', lines_e_google{l}, 'omit'),
+        strsplit(' ', result, 'omit')
+    };
+    
+    scores = zeros(1,3);
+    for i = 1:3
+        score = bleu(eng{l}, refs, i, Inf);
+        scores(i) = score;
+    end
 end
