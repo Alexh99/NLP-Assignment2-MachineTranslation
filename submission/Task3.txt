@@ -1,0 +1,43 @@
+The two tables below show the perplexity
+for both the English and French language 
+models with different values for delta.
+
+The two tables show that as the value of
+delta increases so does the perplexity. 
+The reason for this is because perplexity
+measures how well the model predicts a 
+sample. 
+
+When Delta smoothing is used, 
+a proportion of the probability mass
+is distribtued from word/word pairs that have 
+been seen before to ones that have not. 
+This makes the model not predict the 
+sample as well, which increases the
+perplexity.
+
+
+
+English
+
+Type	|	Delta	|	Perplexity
+-----------------------------------
+MLE		|	 -		|	15.6256
+Smooth	|	0.01	|	40.9492
+Smooth	|	0.05	|	50.3516
+Smooth	|	0.1		|	58.3257
+Smooth	|	0.5		|	95.5639
+Smooth	|	1		|	126.5915
+
+
+
+French
+
+Type	|	Delta	|	Perplexity
+-----------------------------------
+MLE		|	 -		|	 15.6533
+Smooth	|	0.01	|	 39.6149
+Smooth	|	0.05	|	 51.0479
+Smooth	|	0.1		|	 60.4133
+Smooth	|	0.5		|	 104.5894
+Smooth	|	1		|	 142.5124
