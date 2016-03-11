@@ -18,7 +18,7 @@ fn_task5google  = 'Task5.google.e';
 num_sents       = 1000;
 max_iter        = 10;
 lm_type         = '';
-delta           = 1; % These isn't used
+delta           = 1; % This isn't used
 vocabSize       = 1; % This isn't used
 
 % Train your language models. This is task 2 which makes use of task 1
