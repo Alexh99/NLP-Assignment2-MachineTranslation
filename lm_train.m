@@ -36,22 +36,25 @@ SENTSTARTMARK = 'SENTSTART';
 SENTENDMARK = 'SENTEND';
 
 DD = dir( [ dataDir, filesep, '*', language] );
-
 disp([ dataDir, filesep, '.*', language] );
 
+%For each file
 for iFile=1:length(DD)
-
   lines = textread([dataDir, filesep, DD(iFile).name], '%s','delimiter','\n');
 
+  %For each line in the file
   for l=1:length(lines)
 
+    %Process the line and convert to cell array
     processedLine =  preprocess(lines{l}, language);
     words = strsplit(' ', processedLine );
     
     prev_word = '';
+    %For each word
     for j =1:length(words)
         word = words{j};
         if length(word)~=0
+            %Add a count to the unigram struct
             if isfield(LM.uni,word)
                 val = LM.uni.(word)  + 1;  
                 LM.uni.(word) =val;
@@ -62,13 +65,14 @@ for iFile=1:length(DD)
             if ~isfield(LM.bi,word)
                 LM.bi.(word) = struct();
             end 
-        
+            
+            %Add a count to the bigram struct
             if length(prev_word)~=0
                 if isfield(LM.bi.(prev_word),word)
                     val = LM.bi.(prev_word).(word)  + 1;  
-                    LM.bi.(prev_word).(word)  =val;
+                    LM.bi.(prev_word).(word)  = val;
                 else
-                    LM.bi.(prev_word).(word)  =1;     
+                    LM.bi.(prev_word).(word)  = 1;     
                 end
             end
         end

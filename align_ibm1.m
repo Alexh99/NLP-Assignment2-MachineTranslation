@@ -51,7 +51,6 @@ function AM = align_ibm1(trainDir, numSentences, maxIter, fn_AM)
   end
 
 
-
 % --------------------------------------------------------------------------------
 % 
 %  Support functions
@@ -78,13 +77,16 @@ function [eng, fre] = read_hansard(mydir, numSentences)
 	DD_F   = dir( [ mydir, filesep, '*', 'f'] );
 	
     i = 0;
+    
+    %For each file
 	for iFile=1:length(DD_E)
 
 		lines_e = textread([mydir, filesep, DD_E(iFile).name], '%s','delimiter','\n');
 		lines_f = textread([mydir, filesep, DD_F(iFile).name], '%s','delimiter','\n');
 
+        %For each line in file
 		for l=1:length(lines_e)
-			
+			%Continue until we reach numSentences
             if i < numSentences
                 processedLine_e = preprocess(lines_e{l}, 'e');
                 processedLine_f = preprocess(lines_f{l}, 'f');
@@ -94,7 +96,7 @@ function [eng, fre] = read_hansard(mydir, numSentences)
                 
                 i = i + 1;
             else
-                return;
+                return; %numSentences exceeded
             end
         end    
     end
@@ -108,7 +110,7 @@ function AM = initialize(eng, fre)
 %
     AM = {}; % AM.(english_word).(foreign_word)
 
-	
+	%Create a field in the struct if there was an alignment
 	for i = 1:length(eng)
 		for j=1:length(eng{i})
 			for k = 1:length(fre{i})
@@ -119,18 +121,18 @@ function AM = initialize(eng, fre)
 				
 	
 	eng_words = fieldnames(AM);
-	for i = 1:numel(eng_words)
-		
+	
+    %Go through the alignment and uniformly distribute the probabilities
+    for i = 1:numel(eng_words)	
 		fre_words = fieldnames(AM.(eng_words{i}));
 		tot = numel(fre_words);
 		
         for j = 1:numel(fre_words)
-
 			AM.(eng_words{i}).(fre_words{j}) = 1/tot;
-			
         end
     end
     
+    %Make SENSTART and SENDEND have a probability of 1
     AM.SENTSTART = rmfield(AM.SENTSTART, fieldnames(AM.SENTSTART));
     AM.SENTSTART.SENTSTART = 1;
 
@@ -161,21 +163,6 @@ function t = em_step(t, eng, fre)
         end
     end
 
-%     Do we need all word combinations, not just the
-%     combinations we did in the previous step?
-%
-%     Get all unique french and english words
-%     eng_words = unique([eng{:}]);
-%     fre_words = unique([fre{:}]);
-%     for i = 1:numel(eng_words)
-%        e = eng_words{i};
-%        total.(e) = 0;
-%        for j = 1:numel(fre_words)
-%           f = fre_words{j};
-%           tcount.(e).(f) = 0; 
-%        end
-%     end
-    
     %  Slide 13
     for i = 1:numel(eng)
         E = eng{i};

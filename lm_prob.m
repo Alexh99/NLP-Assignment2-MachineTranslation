@@ -52,6 +52,8 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
   if isempty(type)
       for i = 2:length(words)
         prob = 0;
+        
+        %If the denominator exists
         if isfield(LM.uni,words{i-1})
             denom = LM.uni.(words{i-1});
             if isfield(LM.bi.(words{i-1}),words{i})
@@ -59,16 +61,20 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
                 prob = numerator/denom;
                 logProb = logProb + log2(prob);
             end
+        %Otherwise log prob is -infinity
         else
             logProb = logProb -Inf;
         end
       end
-      
+  
+  %Add delta smoothing
   else
       for i = 2:length(words)
         prob = 0;
         denom = delta*vocabSize;
         numerator = delta;
+        
+        %If denominator exists
         if isfield(LM.uni,words{i-1})
             denom = denom + LM.uni.(words{i-1});
             if isfield(LM.bi.(words{i-1}),words{i})
@@ -80,8 +86,4 @@ function logProb = lm_prob(sentence, LM, type, delta, vocabSize)
       end
   end
   
-  
-      
-  % TODO: the student implements the following
-  % TODO: once upon a time there was a curmudgeonly orangutan named Jub-Jub.
 return

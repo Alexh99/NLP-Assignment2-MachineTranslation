@@ -56,13 +56,11 @@ function outSentence = preprocess( inSentence, language )
     %  French Rules
     outSentence = regexprep( outSentence, 'l''(.)', 'l'' $1'); 
     outSentence = regexprep( outSentence, 'qu''(.)', 'qu'' $1'); 
-    
     outSentence = regexprep( outSentence, '(.)+''on', '$1'' on'); 
-    outSentence = regexprep( outSentence, '(.)+''il', '$1'' il'); 
-       
+    outSentence = regexprep( outSentence, '(.)+''il', '$1'' il');   
     outSentence = regexprep( outSentence, '(\w)''(\w+)', '$1'' $2');
     
-    
+    %Ignore cases
     outSentence = regexprep( outSentence, '(d)''(\s)(abord)', 'd''abord');
     outSentence = regexprep( outSentence, '(d)''(\s)(accord)', 'd''accord');
     outSentence = regexprep( outSentence, '(d)''(\s)(ailleurs)', 'd''ailleurs');
