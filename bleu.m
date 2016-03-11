@@ -12,6 +12,15 @@ function score = bleu( candidate, refs, n, cap )
 %       cap       : (int) the maximum number of times to count candidate
 %                   ngrams
 %
+    %Strip SENTSTART and SENTEND
+    candidate(strcmp(candidate, 'SENTSTART')) = [];
+    candidate(strcmp(candidate, 'SENTEND')) = [];
+    
+    for i = 1:numel(refs)
+        refs{i}(strcmp(refs{1}, 'SENTSTART')) = [];
+        refs{i}(strcmp(refs{1}, 'SENTEND')) = [];
+    end
+
     % Calculate brevity score
     num_candidate_words = numel(candidate);
     r = Inf;

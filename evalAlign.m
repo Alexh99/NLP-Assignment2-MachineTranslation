@@ -34,18 +34,13 @@ scores = {};
 for l=1:length(lines_f)
     [status, result] = unix( sprintf('curl --insecure -u "e61cf647-0223-4b73-bfb4-42e375a14af6":"s0SWfR64mL1s" -X POST -F "text=%s" -F "source=fr" -F "target=en" "https://gateway.watsonplatform.net/language-translation/api/v2/translate"', lines_f{l}) );
 	fre = preprocess(lines_f{l}, 'f');
-	eng{l} = strsplit(' ', decode2( fre, LME, AMFE, '', delta, vocabSize ), 'omit');
+	eng{l} = decode( fre, LME, AMFE, '', delta, vocabSize );
 	
     refs = {
         strsplit(' ', preprocess(lines_e{l}, 'e'), 'omit'),
         strsplit(' ', preprocess(lines_e_google{l}, 'e'), 'omit'),
         strsplit(' ', preprocess(result, 'e'), 'omit')
     };
-    
-    %Strip SENTSTART and SENTEND
-    refs{1} = refs{1}(2:(length(refs{1})-1));
-    refs{2} = refs{2}(2:(length(refs{2})-1));
-    refs{3} = refs{3}(2:(length(refs{3})-1));
     
     scores{l} = zeros(1,3);
     for i = 1:3
