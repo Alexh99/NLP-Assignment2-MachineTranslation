@@ -1,7 +1,17 @@
-function [ score ] = bleu( candidate, refs, n, cap )
-%function that calculates the BLEU score, given a candidate and reference
-%sentences.
-
+function score = bleu( candidate, refs, n, cap )
+%
+%  bleu
+% 
+%  This function computes the BLEU score of a candidate sentence given reference sentences. 
+%
+%  INPUTS:
+%
+%       candidate : (cell-array of string) the candidate sentence
+%       refs      : (cell-array of cell-array of strings) the ref strings
+%       n         : (int) the number of ngrams to use
+%       cap       : (int) the maximum number of times to count candidate
+%                   ngrams
+%
     % Calculate brevity score
     num_candidate_words = numel(candidate);
     r = Inf;
@@ -20,81 +30,50 @@ function [ score ] = bleu( candidate, refs, n, cap )
         bp = exp(1-brevity);
     end
     
-    % Create list of unique n-grams across all ref sentences
-    ngrams = {};
-    % Loop from 1 up to n grams
+    % Loop through to create every i to ngram in the candidate
+    candidate_ngrams_list = {};
     for i = 1:n
-        gram_struct = struct();
-        ngrams{i} = gram_struct;
-        % Look at each reference sentence
-        for j = 1:numel(refs)
-            ref = refs{j};
-            % Get every set of i-gram words
-            for k = 1:(numel(ref)-i+1)
-                igram_words = ref(k:k+i-1);
-                % Record that we've seen this "n-gram"
-                % ex. gram_struct.('this').('is').('trigram') = 1
-                inner_struct = gram_struct;
-                for k = 1:(numel(igram_words)-1)
-                    word = igram_words{k};
-                    if not(isfield(inner_struct, word))
-                        inner_struct.(word) = struct();
-                    end
-                    inner_struct = inner_struct.(word);
-                end
-                inner_struct.(igram_words{end}) = 0;
-            end
-        end
-    end
-    
-    % Record count of i to ngram matches in the reference sentences
-    % Note, this is just done in place by traversing the list of 
-    % ngram structures we previously created.
-    for i = 1:n
+        candidate_ngrams_list{i} = {};
         % get all candidate "igram" word tuples for i=1 to n
         for j = 1:(numel(candidate)-i+1)
-            % Check if the igram is in any of the references
-            igram_words = ref(j:j+i-1);
-            gram_struct = ngrams{i};
-            inner_struct = gram_struct;
-            for k = 1:(numel(igram_words)-1)
-                word = igram_words{k};
-                if not(isfield(inner_struct, word))
-                    break;
+            igram_words = candidate(j:j+i-1);
+            candidate_ngrams_list{i} = [candidate_ngrams_list{i}, {strjoin(igram_words)}];
+        end
+    end
+    
+    % Loop through to create every i to ngram for each reference
+    ref_ngrams_list = {};
+    for i = 1:n
+        ref_ngrams_list{i} = {};
+        for j = 1:(numel(refs))
+            ref = refs{j};
+            % get all candidate "igram" word tuples for i=1 to n
+            for k = 1:(numel(ref)-i+1)
+                igram_str = strjoin(ref(k:k+i-1));
+                
+                % don't count ref igrams multiple times
+                if not(any(strcmp(ref_ngrams_list{i}, igram_str)))
+                    ref_ngrams_list{i} = [ref_ngrams_list{i}, {igram_str}];
                 end
-                inner_struct = inner_struct.(word);
-            end
-            
-            if isfield(inner_struct, igram_words{end})
-                inner_struct.(igram_words{end}) = max(inner_struct.(igram_words{end}) + 1, cap);
             end
         end
     end
     
-    % Go back through the structure one last time to calculate precisions
+    % See how many i to ngram are actually in the references
     ngram_precisions = zeros(1, n);
     for i = 1:n
-        % get all candidate "igram" word tuples for i=1 to n
-        N = numel(candidate)-i+1;
-        C = sum_leaves(ngrams{i});
+        ref_igrams = ref_ngrams_list{i};
+        candidate_igrams = candidate_ngrams_list{i};
+        N = numel(candidate_igrams);
+        C = 0;
+        % Check each ngram in the candidate set with ngrams in the ref set
+        for j = 1:numel(ref_igrams)
+            ref_igram = ref_igrams{j};
+            C = C + min(sum(strcmp(candidate_igrams, ref_igram)), cap);
+        end
         ngram_precisions(i) = C/N;
     end
-
-    score = bp/(prod(ngram_precisions)^n);
     
-end
-
-function [ total ] = sum_leaves( in )
-    % Assume either struct or number
-    if isstruct(in)
-        names = fieldnames(in);
-        values = zeros(1, numel(names));
-        for i = 1:numel(names)
-            name = names{i};
-            values(i) = sum_leaves(in.(name));
-        end
-        total = sum(values);
-    else
-        total = in;
-    end
+    score = bp*(prod(ngram_precisions)^(1/n));
+    
 end
