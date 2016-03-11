@@ -1,4 +1,4 @@
-function pp = perplexity( LM, testDir, language, type, delta )
+ function pp = perplexity( LM, testDir, language, type, delta )
 %
 %  perplexity
 % 
